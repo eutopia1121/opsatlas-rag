@@ -1,0 +1,20 @@
+# Python 虚拟环境与缓存
+.venv/
+__pycache__/
+*.py[cod]
+
+# 密钥和本地配置
+.env
+.env.*
+!.env.example
+
+# 本地运行时数据
+storage/
+uploads/
+*.log
+
+# IDE 与操作系统生成的文件
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
