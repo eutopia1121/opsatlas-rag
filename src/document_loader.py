@@ -1,5 +1,6 @@
 from pathlib import Path
-
+##定义文档目录路径常量，批量读取指定目
+# 录下md/txt文件并返回包含文件名与全文的文档列表，直接运行时打印读取到的文档数量与内容预览。
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 RAW_DATA_DIR = PROJECT_ROOT / "data" / "raw"
