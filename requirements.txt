@@ -2,3 +2,5 @@ sentence-transformers
 pymilvus
 openai
 python-dotenv
+fastapi
+uvicorn[standard]
