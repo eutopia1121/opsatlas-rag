@@ -1,6 +1,6 @@
 from embedding import embed_texts
 from milvus_client import COLLECTION_NAME, client
-
+MIN_SCORE = 0.55
 
 def embed_question(question: str) -> list[float]:
     """将用户问题转换为单个检索向量。"""
@@ -37,13 +37,19 @@ def search_knowledge(question: str, top_k: int = 3) -> list[dict]:
             }
         )
 
-    return results
+    filtered_results = [
+        result
+        for result in results
+        if result["score"] >= MIN_SCORE
+    ]
+
+    return filtered_results
 
 if __name__ == "__main__":
-    question = "设备出现 E205 时应如何处理？"
+    question = "设备采购价格是多少？"
 
     results = search_knowledge(question, top_k=3)
-
+    print(f"符合阈值的资料数量：{len(results)}\n")
     print(f"用户问题：{question}\n")
 
     for index, result in enumerate(results, start=1):
