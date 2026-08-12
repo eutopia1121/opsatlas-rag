@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from rag_chat import ask_knowledge_base
 from pathlib import Path
-
+from ingest import ingest
 from fastapi.staticfiles import StaticFiles
 app = FastAPI(
     title="OpsAtlas API",
@@ -29,7 +29,12 @@ class AskResponse(BaseModel):
         """POST /ask 的响应体。"""
         answer: str
         sources: list[SourceItem]
-
+class IngestResponse(BaseModel):
+    """POST /ingest 的响应体。"""
+    message: str
+    document_count: int
+    chunk_count: int
+    record_count: int
 @app.get("/health")
 def health_check() -> dict:
     return {
@@ -58,6 +63,19 @@ def ask_question(request: AskRequest) -> AskResponse:
         answer=answer,
         sources=sources,
     )
+
+@app.post("/ingest", response_model=IngestResponse)
+def ingest_knowledge_base() -> IngestResponse:
+    """重新处理 data/raw 中的文档并写入 Milvus。"""
+    summary = ingest()
+
+    return IngestResponse(
+        message="知识库入库完成",
+        document_count=summary["document_count"],
+        chunk_count=summary["chunk_count"],
+        record_count=summary["record_count"],
+    )
+
 app.mount(
     "/",
     StaticFiles(directory=STATIC_DIR, html=True),
