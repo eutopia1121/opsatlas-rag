@@ -18,7 +18,7 @@ def search_knowledge(question: str, top_k: int = 3) -> list[dict]:
         collection_name=COLLECTION_NAME,
         data=[question_vector],
         limit=top_k,
-        output_fields=["source", "title", "content"],
+        output_fields=["source", "title", "content", "page_number"],
     )
 
     hits = search_results[0]
@@ -33,6 +33,7 @@ def search_knowledge(question: str, top_k: int = 3) -> list[dict]:
                 "score": hit["distance"],
                 "source": entity["source"],
                 "title": entity["title"],
+                "page_number": entity.get("page_number"),
                 "content": entity["content"],
             }
         )

@@ -28,6 +28,14 @@ def ensure_collection() -> None:
 
     print(f"Collection 创建成功：{COLLECTION_NAME}")
 
+def clear_records() -> None:
+    """删除当前知识库中的全部有效记录，用于全量重新入库。"""
+    client.delete(
+        collection_name=COLLECTION_NAME,
+        filter="chunk_id >= 0",
+    )
+
+    print("已清空旧知识记录")
 
 def upsert_records(records: list[dict]) -> None:
     """将带向量的 Chunk 记录写入 Milvus。"""

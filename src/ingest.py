@@ -1,6 +1,6 @@
 from document_loader import RAW_DATA_DIR, load_documents
 from embedding import embed_chunks
-from milvus_client import ensure_collection, upsert_records
+from milvus_client import clear_records, ensure_collection, upsert_records
 from text_splitter import split_documents
 
 
@@ -11,6 +11,7 @@ def ingest() -> dict:
     records = embed_chunks(chunks)
 
     ensure_collection()
+    clear_records()
     upsert_records(records)
 
     summary = {

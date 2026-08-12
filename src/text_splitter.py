@@ -33,6 +33,7 @@ def split_document_by_heading(document: dict, heading_getter) -> list[dict]:
                 chunks.append(
                     {
                         "source": source,
+                        "page_number": document["page_number"],
                         "title": current_title,
                         "content": "\n".join(current_lines).strip(),
                     }
@@ -47,6 +48,7 @@ def split_document_by_heading(document: dict, heading_getter) -> list[dict]:
         chunks.append(
             {
                 "source": source,
+                "page_number": document["page_number"],
                 "title": current_title,
                 "content": "\n".join(current_lines).strip(),
             }
@@ -72,7 +74,7 @@ def split_documents(documents: list[dict]) -> list[dict]:
 
         if source.endswith(".md"):
             document_chunks = split_markdown_document(document)
-        elif source.endswith(".txt"):
+        elif source.endswith(".txt") or source.endswith(".pdf"):
             document_chunks = split_text_document(document)
         else:
             continue
@@ -95,5 +97,6 @@ if __name__ == "__main__":
     for chunk in chunks:
         print(f"Chunk {chunk['chunk_id']}：{chunk['title']}")
         print(f"来源：{chunk['source']}")
+        print(f"页码：{chunk['page_number']}")
         print(f"正文前 80 个字：{chunk['content'][:80]}")
         print("-" * 40)

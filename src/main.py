@@ -4,6 +4,7 @@ from rag_chat import ask_knowledge_base
 from pathlib import Path
 from ingest import ingest
 from fastapi.staticfiles import StaticFiles
+
 app = FastAPI(
     title="OpsAtlas API",
     version="0.1.0",
@@ -19,11 +20,12 @@ class AskRequest(BaseModel):
     )
 
 class SourceItem(BaseModel):
-        """单条引用来源。"""
-        chunk_id: int
-        source: str
-        title: str
-        score: float
+    """单条引用来源。"""
+    chunk_id: int
+    source: str
+    title: str
+    page_number: int | None
+    score: float
 
 class AskResponse(BaseModel):
         """POST /ask 的响应体。"""
@@ -54,6 +56,7 @@ def ask_question(request: AskRequest) -> AskResponse:
             SourceItem(
                 chunk_id=raw_source["chunk_id"],
                 source=raw_source["source"],
+                page_number=raw_source["page_number"],
                 title=raw_source["title"],
                 score=raw_source["score"],
             )

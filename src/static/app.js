@@ -32,15 +32,23 @@ askButton.addEventListener("click", async () => {
     const data = await response.json();
 
         const sourcesHtml = data.sources
-      .map(
-        (source) => `
-          <li>
-            <strong>${source.title}</strong>
-            <span>${source.source} · Chunk ${source.chunk_id} · 相似度 ${source.score.toFixed(3)}</span>
-          </li>
-        `,
-      )
-      .join("");
+  .map((source) => {
+    const pageText = source.page_number
+      ? ` · 第 ${source.page_number} 页`
+      : "";
+
+    return `
+      <li>
+        <strong>${source.title}</strong>
+        <span>
+          ${source.source}${pageText}
+          · Chunk ${source.chunk_id}
+          · 相似度 ${source.score.toFixed(3)}
+        </span>
+      </li>
+    `;
+  })
+  .join("");
 
     const sourceSection = data.sources.length
       ? `
