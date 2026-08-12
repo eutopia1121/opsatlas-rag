@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpsAtlas 运维知识库</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="page-header">
+      <p class="eyebrow">RAG KNOWLEDGE BASE</p>
+      <h1>OpsAtlas 运维知识库</h1>
+      <p class="subtitle">基于设备运维资料的智能问答与来源追溯</p>
+    </header>
+
+    <section class="chat-card">
+      <label for="question-input">请输入设备运维问题</label>
+
+      <textarea
+        id="question-input"
+        placeholder="例如：设备出现 E205 时应如何处理？"
+      ></textarea>
+
+      <div class="action-row">
+        <p id="hint-text">系统将仅依据知识库资料回答。</p>
+        <button id="ask-button">开始提问</button>
+      </div>
+    </section>
+
+    <section id="answer-area" class="answer-card">
+      <h2>回答</h2>
+      <p class="empty-message">请输入问题后点击“开始提问”。</p>
+    </section>
+  </main>
+</body>
+</html>

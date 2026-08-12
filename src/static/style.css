@@ -1,0 +1,146 @@
+:root {
+  color: #172033;
+  background: #f4f7fb;
+  font-family: "Microsoft YaHei", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.app-shell {
+  width: min(920px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 64px 0;
+}
+
+.page-header {
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+h1 {
+  margin: 0;
+  font-size: 36px;
+}
+
+.subtitle {
+  color: #64748b;
+}
+
+.chat-card,
+.answer-card {
+  margin-top: 20px;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+label,
+h2 {
+  display: block;
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 128px;
+  padding: 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font: inherit;
+  resize: vertical;
+}
+.answer-text {
+  margin: 0;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.sources {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.sources h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+
+.sources ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sources li {
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.sources strong,
+.sources span {
+  display: block;
+}
+
+.sources span {
+  margin-top: 4px;
+  color: #64748b;
+  font-size: 14px;
+}
+textarea:focus {
+  border-color: #2563eb;
+  outline: 3px solid rgba(37, 99, 235, 0.15);
+}
+
+.action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+#hint-text,
+.empty-message {
+  margin: 0;
+  color: #64748b;
+}
+
+button {
+  padding: 11px 18px;
+  color: #ffffff;
+  background: #2563eb;
+  border: 0;
+  border-radius: 9px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  background: #94a3b8;
+}

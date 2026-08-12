@@ -1,10 +1,15 @@
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from rag_chat import ask_knowledge_base
+from pathlib import Path
+
+from fastapi.staticfiles import StaticFiles
 app = FastAPI(
     title="OpsAtlas API",
     version="0.1.0",
 )
+
+STATIC_DIR = Path(__file__).resolve().parent / "static"
 
 class AskRequest(BaseModel):
     """POST /ask 的请求体。"""
@@ -53,3 +58,8 @@ def ask_question(request: AskRequest) -> AskResponse:
         answer=answer,
         sources=sources,
     )
+app.mount(
+    "/",
+    StaticFiles(directory=STATIC_DIR, html=True),
+    name="static",
+)
