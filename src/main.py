@@ -1,10 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from rag_chat import ask_knowledge_base
 from pathlib import Path
 from ingest import ingest
 from fastapi.staticfiles import StaticFiles
+from logger_config import setup_logger
 
+
+logger = setup_logger()
 app = FastAPI(
     title="OpsAtlas API",
     version="0.1.0",
@@ -45,27 +48,37 @@ def health_check() -> dict:
     }
 
 @app.post("/ask", response_model=AskResponse)
+@app.post("/ask", response_model=AskResponse)
 def ask_question(request: AskRequest) -> AskResponse:
     """接收用户问题，执行完整 RAG 问答流程。"""
-    answer, raw_sources = ask_knowledge_base(request.question)
+    try:
+        answer, raw_sources = ask_knowledge_base(request.question)
 
-    sources = []
+        sources = []
 
-    for raw_source in raw_sources:
-        sources.append(
-            SourceItem(
-                chunk_id=raw_source["chunk_id"],
-                source=raw_source["source"],
-                page_number=raw_source["page_number"],
-                title=raw_source["title"],
-                score=raw_source["score"],
+        for raw_source in raw_sources:
+            sources.append(
+                SourceItem(
+                    chunk_id=raw_source["chunk_id"],
+                    source=raw_source["source"],
+                    page_number=raw_source["page_number"],
+                    title=raw_source["title"],
+                    score=raw_source["score"],
+                )
             )
+
+        return AskResponse(
+            answer=answer,
+            sources=sources,
         )
 
-    return AskResponse(
-        answer=answer,
-        sources=sources,
-    )
+    except Exception as error:
+        logger.exception("知识库问答失败：%s", error)
+
+        raise HTTPException(
+            status_code=503,
+            detail="问答服务暂时不可用，请稍后再试。",
+        ) from error
 
 @app.post("/ingest", response_model=IngestResponse)
 def ingest_knowledge_base() -> IngestResponse:

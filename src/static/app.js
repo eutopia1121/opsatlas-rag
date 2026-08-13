@@ -25,9 +25,13 @@ askButton.addEventListener("click", async () => {
       }),
     });
 
-    if (!response.ok) {
-      throw new Error("问答请求失败");
-    }
+   if (!response.ok) {
+  const errorData = await response.json().catch(() => null);
+
+  throw new Error(
+    errorData?.detail || "问答服务暂时不可用，请稍后再试。"
+  );
+}
 
     const data = await response.json();
 
@@ -70,7 +74,10 @@ askButton.addEventListener("click", async () => {
       ${sourceSection}
     `;
   } catch (error) {
-    answerArea.innerHTML = "<h2>回答</h2><p>请求失败，请确认后端服务和 Milvus 已启动。</p>";
+    answerArea.innerHTML = `
+  <h2>回答</h2>
+  <p>${error.message}</p>
+`;
   } finally {
     askButton.disabled = false;
     askButton.textContent = "开始提问";

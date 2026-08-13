@@ -1,7 +1,12 @@
+import os
+
 from pymilvus import MilvusClient
 
 
-MILVUS_URI = "http://localhost:19530"
+MILVUS_URI = os.getenv(
+    "MILVUS_URI",
+    "http://localhost:19530",
+)
 
 client = MilvusClient(uri=MILVUS_URI)
 
@@ -69,18 +74,3 @@ if __name__ == "__main__":
     print(f"当前 Collection：{COLLECTION_NAME}")
     print(f"当前记录数量：{count}")
 
-
-if __name__ == "__main__":
-    question = "设备出现 E205 时应如何处理？"
-
-    results = search_knowledge(question, top_k=3)
-
-    print(f"用户问题：{question}\n")
-
-    for index, result in enumerate(results, start=1):
-        print(f"Top {index}")
-        print(f"相似度分数：{result['score']:.4f}")
-        print(f"标题：{result['title']}")
-        print(f"来源：{result['source']}")
-        print(f"内容：{result['content']}")
-        print("-" * 40)
