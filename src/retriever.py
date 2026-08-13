@@ -47,7 +47,7 @@ def search_knowledge(question: str, top_k: int = 3) -> list[dict]:
     return filtered_results
 
 if __name__ == "__main__":
-    question = "设备采购价格是多少？"
+    question = "E205 输送带电机过热应如何处理？"
 
     results = search_knowledge(question, top_k=3)
     print(f"符合阈值的资料数量：{len(results)}\n")
@@ -58,5 +58,6 @@ if __name__ == "__main__":
         print(f"相似度分数：{result['score']:.4f}")
         print(f"标题：{result['title']}")
         print(f"来源：{result['source']}")
+        print(f"页码：{result['page_number']}")
         print(f"内容：{result['content']}")
         print("-" * 40)
