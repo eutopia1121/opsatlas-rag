@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 from rag_chat import ask_knowledge_base
 from pathlib import Path
@@ -14,7 +14,10 @@ app = FastAPI(
 )
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+RAW_DATA_DIR = PROJECT_ROOT / "data" / "raw"
 
+SUPPORTED_UPLOAD_SUFFIXES = {".md", ".txt", ".pdf"}
 class AskRequest(BaseModel):
     """POST /ask 的请求体。"""
     question: str = Field(
@@ -37,6 +40,15 @@ class AskResponse(BaseModel):
 class IngestResponse(BaseModel):
     """POST /ingest 的响应体。"""
     message: str
+    document_count: int
+    chunk_count: int
+    record_count: int
+
+
+class UploadResponse(BaseModel):
+    """POST /upload 的响应体。"""
+    message: str
+    filename: str
     document_count: int
     chunk_count: int
     record_count: int
@@ -79,6 +91,61 @@ def ask_question(request: AskRequest) -> AskResponse:
             status_code=503,
             detail="问答服务暂时不可用，请稍后再试。",
         ) from error
+
+
+@app.post("/upload", response_model=UploadResponse)
+async def upload_document(
+    file: UploadFile = File(...),
+) -> UploadResponse:
+    """上传一个知识文档，并重新执行入库。"""
+    filename = Path(file.filename or "").name
+    suffix = Path(filename).suffix.lower()
+
+    if not filename:
+        raise HTTPException(
+            status_code=400,
+            detail="请选择要上传的文件。",
+        )
+
+    if suffix not in SUPPORTED_UPLOAD_SUFFIXES:
+        raise HTTPException(
+            status_code=400,
+            detail="仅支持 .md、.txt、.pdf 文件。",
+        )
+
+    RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+    save_path = RAW_DATA_DIR / filename
+    file_content = await file.read()
+    save_path.write_bytes(file_content)
+
+    logger.info("收到上传文件：%s", filename)
+
+    try:
+        summary = ingest()
+
+        logger.info(
+            "上传文件入库完成：%s，Chunk 数量：%s",
+            filename,
+            summary["chunk_count"],
+        )
+
+        return UploadResponse(
+            message="文件上传并入库完成",
+            filename=filename,
+            document_count=summary["document_count"],
+            chunk_count=summary["chunk_count"],
+            record_count=summary["record_count"],
+        )
+
+    except Exception as error:
+        logger.exception("上传文件入库失败：%s", error)
+
+        raise HTTPException(
+            status_code=503,
+            detail="文件已上传，但知识库入库暂时失败，请稍后重试。",
+        ) from error
+
 
 @app.post("/ingest", response_model=IngestResponse)
 def ingest_knowledge_base() -> IngestResponse:

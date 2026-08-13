@@ -1,7 +1,9 @@
 const questionInput = document.getElementById("question-input");
 const askButton = document.getElementById("ask-button");
 const answerArea = document.getElementById("answer-area");
-
+const fileInput = document.getElementById("file-input");
+const uploadButton = document.getElementById("upload-button");
+const uploadHint = document.getElementById("upload-hint");
 
 askButton.addEventListener("click", async () => {
   const question = questionInput.value.trim();
@@ -81,5 +83,47 @@ askButton.addEventListener("click", async () => {
   } finally {
     askButton.disabled = false;
     askButton.textContent = "开始提问";
+  }
+});
+uploadButton.addEventListener("click", async () => {
+  const file = fileInput.files[0];
+
+  if (!file) {
+    uploadHint.textContent = "请先选择一个 .md、.txt 或 .pdf 文件。";
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  uploadButton.disabled = true;
+  uploadButton.textContent = "入库中...";
+  uploadHint.textContent = `正在上传 ${file.name} 并更新知识库，请稍候。`;
+
+  try {
+    const response = await fetch("/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error(
+        data?.detail || "文件上传或入库失败，请稍后再试。"
+      );
+    }
+
+    uploadHint.textContent =
+      `上传成功：${data.filename}；` +
+      `当前共 ${data.document_count} 条文档记录、` +
+      `${data.chunk_count} 个 Chunk。`;
+
+    fileInput.value = "";
+  } catch (error) {
+    uploadHint.textContent = `上传失败：${error.message}`;
+  } finally {
+    uploadButton.disabled = false;
+    uploadButton.textContent = "上传并入库";
   }
 });

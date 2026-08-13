@@ -14,7 +14,22 @@
       <h1>OpsAtlas 运维知识库</h1>
       <p class="subtitle">基于设备运维资料的智能问答与来源追溯</p>
     </header>
+        <section class="chat-card upload-card">
+      <label for="file-input">上传运维资料</label>
 
+      <input
+        id="file-input"
+        type="file"
+        accept=".md,.txt,.pdf"
+      >
+
+      <div class="action-row">
+        <p id="upload-hint">
+          支持 Markdown、TXT、PDF；上传后将自动重新入库。
+        </p>
+        <button id="upload-button">上传并入库</button>
+      </div>
+    </section>
     <section class="chat-card">
       <label for="question-input">请输入设备运维问题</label>
 
